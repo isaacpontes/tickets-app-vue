@@ -1,5 +1,15 @@
 <script setup>
+import { Modal } from 'bootstrap'
+import UpdateSubscriberModal from './UpdateSubscriberModal.vue'
+
 defineProps(['subscribers'])
+const emit = defineEmits(['updateSubscriber'])
+
+function handleUpdate(updatedSubscriber) {
+  const modalElement = document.querySelector(`#updateSubscriber${updatedSubscriber.id}Modal`)
+  Modal.getInstance(modalElement).hide()
+  emit('updateSubscriber', updatedSubscriber)
+}
 </script>
 
 <template>
@@ -26,10 +36,12 @@ defineProps(['subscribers'])
         <td v-else>
           <i class="bi bi-x-circle-fill text-danger"></i>
         </td>
-        <td class="d-flex">
-          <button class="btn btn-sm btn-danger">
-            <i class="bi bi-trash pe-none me-2"></i>
-            Excluir
+        <td class="d-flex flex-column flex-md-row">
+          <UpdateSubscriberModal :subscriber-to-update="subscriber" @subscriber-updated="handleUpdate" />
+          <button class="btn btn-sm btn-secondary mb-2 mb-md-0 me-md-2" data-bs-toggle="modal"
+            :data-bs-target="`#updateSubscriber${subscriber.id}Modal`">
+            <i class="bi bi-pencil-square pe-none me-2"></i>
+            Editar
           </button>
         </td>
       </tr>

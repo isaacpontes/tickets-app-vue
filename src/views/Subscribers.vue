@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { api } from '../services/api'
-import { Modal } from 'bootstrap'
 import AddSubscriberModal from '../components/AddSubscriberModal.vue'
 import SubscribersTable from '../components/SubscribersTable.vue'
 
@@ -14,6 +13,11 @@ async function fetchSubscribers() {
 
 function addSubscriber(subscriber) {
   subscribers.value = [...subscribers.value, subscriber]
+}
+
+function updateSubscriber(subscriber) {
+  const updatedSubscribers = subscribers.value.map(sub => sub.id === subscriber.id ? subscriber : sub)
+  subscribers.value = updatedSubscribers
 }
 
 onMounted(() => {
@@ -30,7 +34,7 @@ onMounted(() => {
     </button>
   </div>
   <hr>
-  <add-subscriber-modal :add-subscriber="addSubscriber" />
-  <subscribers-table :subscribers="subscribers" />
+  <AddSubscriberModal :add-subscriber="addSubscriber" />
+  <SubscribersTable :subscribers="subscribers" @update-subscriber="updateSubscriber" />
   <!-- <subscribers-grid :subscribers="subscribers" /> -->
 </template>
