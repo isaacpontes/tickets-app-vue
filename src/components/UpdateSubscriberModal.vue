@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { api } from '../services/api';
-import Alert from './Alert.vue';
+import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue';
 
 const props = defineProps(['subscriberToUpdate'])

@@ -1,8 +1,10 @@
 <script setup>
 import { reactive } from 'vue'
 import { api } from '../services/api'
-import Alert from './Alert.vue'
+import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue'
+import ModalBody from './common/ModalBody.vue'
+import ModalFooter from './common/ModalFooter.vue'
 
 const props = defineProps(['inventories'])
 const emit = defineEmits(['repositionAdded'])
@@ -45,7 +47,7 @@ function toggleAlert(message, color = 'primary') {
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </template>
     <form v-on:submit="handleSubmit">
-      <div class="modal-body">
+      <ModalBody>
         <span class="text-secondary">Adiciona uma reposição de tickets ao estoque.</span>
         <hr>
         <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
@@ -71,11 +73,11 @@ function toggleAlert(message, color = 'primary') {
             </option>
           </select>
         </div>
-      </div>
-      <div class="modal-footer">
+      </ModalBody>
+      <ModalFooter>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
         <button type="submit" class="btn btn-primary">Adicionar Reposição</button>
-      </div>
+      </ModalFooter>
     </form>
   </Modal>
 </template>

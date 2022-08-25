@@ -1,7 +1,10 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { api } from '../services/api';
-import Alert from './Alert.vue';
+import Alert from './common/Alert.vue'
+import Modal from './common/Modal.vue'
+import ModalBody from './common/ModalBody.vue'
+import ModalFooter from './common/ModalFooter.vue'
 
 const props = defineProps(['addLocation'])
 
@@ -33,31 +36,27 @@ function toggleAlert(message, color = 'primary') {
 </script>
 
 <template>
-  <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addLocationModalLabel">Adicionar novo local</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <Modal id="addLocationModal">
+    <template #header>
+      <h5 class="modal-title" id="addLocationModalLabel">Adicionar novo local</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </template>
+
+    <form v-on:submit="handleSubmit">
+      <ModalBody>
+        <span class="text-secondary">Cria um novo local, seu estoque e sua mesa no banco de dados.</span>
+        <hr>
+        <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
+        <div class="mb-3">
+          <label for="locationName" class="form-label">Nome do Local</label>
+          <input v-model="locationName" type="text" class="form-control" id="locationName" placeholder="Ex.: Centro"
+            required>
         </div>
-        <form v-on:submit="handleSubmit">
-          <div class="modal-body">
-            <span class="text-secondary">Cria um novo local, seu estoque e sua mesa no banco de dados.</span>
-            <hr>
-            <alert :show="alert.show" :color="alert.color" :message="alert.message" />
-            <div class="mb-3">
-              <label for="locationName" class="form-label">Nome do Local</label>
-              <input v-model="locationName" type="text" class="form-control" id="locationName" placeholder="Ex.: Centro"
-                required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            <button type="submit" class="btn btn-primary">Criar Local</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+      </ModalBody>
+      <ModalFooter>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-primary">Criar Local</button>
+      </ModalFooter>
+    </form>
+  </Modal>
 </template>
