@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf'
 import autotable from 'jspdf-autotable'
 
-export function generatePdfReport({ title, description, thead, tbody }) {
+export function generatePdfReport({ title, description, thead, tbody, filename }) {
   const doc = new jsPDF({ orientation: 'landscape' })
   doc.setFontSize(12)
   doc.addImage('/logo.png', 'png', 14, 11)
@@ -14,5 +14,5 @@ export function generatePdfReport({ title, description, thead, tbody }) {
     body: tbody,
     startY: 36
   })
-  doc.save('balanco-geral-mensal.pdf')
+  doc.save(`${filename}.pdf`)
 }

@@ -24,7 +24,8 @@ function download() {
     title: 'Balanço Geral Mensal',
     description: `Relatório de estoque de tickets referente ao mês de ${month}`,
     thead: [[ 'Localidade', 'Saldo Anterior', 'Entradas', 'Saídas', 'Saldo Atual' ]],
-    tbody: body
+    tbody: body,
+    filename: 'balanco-geral-estoque'
   })
 }
 </script>
