@@ -4,6 +4,7 @@ import { api } from '../services/api';
 import NavLink from '../components/common/NavLink.vue';
 import BoardsTab from '../components/BoardsTab.vue';
 import InventoriesTab from '../components/InventoriesTab.vue';
+import ReportsTab from '../components/ReportsTab.vue';
 
 const report = reactive({ inventories: [], boards: [] })
 const activeTab = ref('start')
@@ -46,7 +47,5 @@ onMounted(() => {
   </section>
   <BoardsTab v-if="activeTab === 'boards'" :boards="report.boards" />
   <InventoriesTab v-if="activeTab === 'inventories'" :inventories="report.inventories" />
-  <section v-else-if="activeTab === 'reports'" class="py-3 px-2">
-    <h2 class="fs-4">Relatórios</h2>
-  </section>
+  <ReportsTab v-else-if="activeTab === 'reports'" :boards="report.boards" :inventories="report.inventories" />
 </template>
