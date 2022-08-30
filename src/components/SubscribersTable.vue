@@ -1,14 +1,27 @@
 <script setup>
 import { Modal } from 'bootstrap'
+import { api } from '../services/api';
 import UpdateSubscriberModal from './UpdateSubscriberModal.vue'
 
 defineProps(['subscribers'])
-const emit = defineEmits(['updateSubscriber'])
+const emit = defineEmits(['updateSubscriber', 'deleteSubscriber'])
 
 function handleUpdate(updatedSubscriber) {
   const modalElement = document.querySelector(`#updateSubscriber${updatedSubscriber.id}Modal`)
   Modal.getInstance(modalElement).hide()
   emit('updateSubscriber', updatedSubscriber)
+}
+
+async function handleDelete(subscriberId) {
+  const confirmation = confirm("Tem certeza que deseja excluir este registro?\n\nATENÇÃO! ESSA É UMA AÇÃO IRREVERSÍVEL.")
+  if (!confirmation) return
+  try {
+    await api.delete(`/subscribers/${subscriberId}`)
+    emit('deleteSubscriber', subscriberId)
+  } catch (err) {
+    console.error(err.message)
+    alert("Erro ao excluir contribuinte.")
+  }
 }
 </script>
 
@@ -42,6 +55,10 @@ function handleUpdate(updatedSubscriber) {
             :data-bs-target="`#updateSubscriber${subscriber.id}Modal`">
             <i class="bi bi-pencil-square pe-none me-2"></i>
             Editar
+          </button>
+          <button class="btn btn-sm btn-danger" @click="() => handleDelete(subscriber.id)">
+            <i class="bi bi-trash pe-none me-2"></i>
+            Excluir
           </button>
         </td>
       </tr>
