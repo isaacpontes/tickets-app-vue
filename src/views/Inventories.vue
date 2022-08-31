@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { api } from '../services/api'
+import { fetchAllInventories } from '../services/inventories'
 import InventoriesTable from '../components/InventoriesTable.vue'
 import AddRepositionModal from '../components/AddRepositionModal.vue';
 import AddWithdrawalModal from '../components/AddWithdrawalModal.vue';
@@ -8,8 +8,7 @@ import AddWithdrawalModal from '../components/AddWithdrawalModal.vue';
 const inventories = ref([])
 
 async function fetchInventories() {
-  const response = await api.get('/inventories')
-  inventories.value = response.data
+  inventories.value = await fetchAllInventories()
 }
 
 onMounted(() => {
@@ -29,7 +28,13 @@ onMounted(() => {
     </button>
   </div>
   <hr>
-  <AddWithdrawalModal :inventories="inventories" @withdraw="fetchInventories" />
-  <AddRepositionModal :inventories="inventories" @reposition-added="fetchInventories()" />
+  <AddWithdrawalModal
+    :inventories="inventories"
+    @withdraw="fetchInventories"
+  />
+  <AddRepositionModal
+    :inventories="inventories"
+    @reposition-added="fetchInventories"
+  />
   <InventoriesTable :inventories="inventories" />
 </template>

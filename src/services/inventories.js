@@ -1,4 +1,15 @@
-import { generatePdfReport } from "./pdf"
+import { api } from './api'
+import { generatePdfReport } from './pdf'
+
+export async function fetchAllInventories() {
+  try {
+    const { data } = await api.get('/inventories')
+    return data
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao obter os dados dos estoques.')
+  }
+}
 
 export function generateMonthlyInventoriesReport(inventories, month, year) {
   const date = month && year ? new Date(year, month - 1) : new Date()

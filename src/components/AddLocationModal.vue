@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { api } from '../services/api';
+import { createLocation } from '../services/locations';
 import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue'
 import ModalBody from './common/ModalBody.vue'
@@ -14,14 +15,11 @@ const alert = reactive({ ...initialState })
 
 async function handleSubmit(ev) {
   ev.preventDefault()
-  try {
-    const response = await api.post('/locations', { name: locationName.value })
-    props.addLocation(response.data)
+  const data = await createLocation(locationName.value)
+  if (data) {
+    props.addLocation(data.location)
     locationName.value = ''
     toggleAlert('Local criado com sucesso.', 'success')
-  } catch (err) {
-    console.log(err)
-    toggleAlert(err.response.data.message, 'danger')
   }
 }
 
