@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import calculateAge from '../utils/calculateAge';
 import UpdateSubscriberModal from './UpdateSubscriberModal.vue'
 
-defineProps(['subscribers'])
+defineProps(['subscribers', 'locations'])
 const emit = defineEmits(['updateSubscriber', 'deleteSubscriber'])
 
 function handleUpdate(updatedSubscriber) {
@@ -53,7 +53,11 @@ async function handleDelete(subscriberId) {
           <i class="bi bi-x-circle-fill text-danger"></i>
         </td>
         <td class="d-flex flex-column flex-md-row">
-          <UpdateSubscriberModal :subscriber-to-update="subscriber" @subscriber-updated="handleUpdate" />
+          <UpdateSubscriberModal
+            :subscriber-to-update="subscriber"
+            :locations="locations"
+            @subscriber-updated="handleUpdate"
+          />
           <button class="btn btn-sm btn-secondary mb-2 mb-md-0 me-md-2" data-bs-toggle="modal"
             :data-bs-target="`#updateSubscriber${subscriber.id}Modal`">
             <i class="bi bi-pencil-square pe-none me-2"></i>

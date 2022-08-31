@@ -103,6 +103,10 @@ onMounted(() => {
       <input @keyup="handleFilterByName" type="text" class="form-control" placeholder="Digite um nome para pesquisar...">
     </div>
   </section>
-  <SubscribersTable :subscribers="filteredSubscribers ?? subscribers" @update-subscriber="updateSubscriber"
-    @delete-subscriber="deleteSubscriber" />
+  <SubscribersTable
+    :subscribers="filteredSubscribers ?? subscribers"
+    :locations="locations"
+    @update-subscriber="updateSubscriber"
+    @delete-subscriber="deleteSubscriber"
+  />
 </template>

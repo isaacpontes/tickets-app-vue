@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue';
 
-const props = defineProps(['subscriberToUpdate'])
+const props = defineProps(['subscriberToUpdate', 'locations'])
 const emit = defineEmits(['subscriberUpdated'])
 
 const subscriber = reactive({
@@ -14,7 +14,6 @@ const subscriber = reactive({
 
 const initialAlert = { show: false, message: '', color: '' }
 const alert = reactive({ ...initialAlert })
-const locations = ref([])
 
 async function handleSubmit(ev) {
   ev.preventDefault()
@@ -33,15 +32,6 @@ async function handleSubmit(ev) {
     toggleAlert(message, 'danger')
   }
 }
-
-async function fetchLocations() {
-  const response = await api.get('/locations')
-  locations.value = response.data
-}
-
-onMounted(() => {
-  fetchLocations()
-})
 
 function toggleAlert(message, color = 'primary') {
   alert.color = color
@@ -85,8 +75,8 @@ function toggleAlert(message, color = 'primary') {
           <label class="form-check-label" for="isUpdatedSwitch">Dados Atualizados?</label>
         </div>
         <div class="mb-3">
-          <label for="locationsDataList" class="form-label">Local</label>
-          <select v-model="subscriber.locationId" class="form-select" aria-label="Lista de locais">
+          <label for="locations" class="form-label">Local</label>
+          <select v-model="subscriber.locationId" id="locations" class="form-select" aria-label="Lista de locais">
             <option v-for="location in locations" :value="location.id" :key="location.id"
               :selected="subscriberToUpdate.location?.id === location.id">
               {{ location.name }}
