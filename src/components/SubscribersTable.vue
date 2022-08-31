@@ -1,6 +1,7 @@
 <script setup>
 import { Modal } from 'bootstrap'
 import { api } from '../services/api';
+import calculateAge from '../utils/calculateAge';
 import UpdateSubscriberModal from './UpdateSubscriberModal.vue'
 
 defineProps(['subscribers'])
@@ -31,9 +32,10 @@ async function handleDelete(subscriberId) {
       <tr>
         <th scope="col">#</th>
         <th scope="col">Nome</th>
+        <th scope="col">Idade</th>
         <th scope="col">Local</th>
         <th scope="col">CPF</th>
-        <th scope="col">Atualizado?</th>
+        <th scope="col">At.</th>
         <th scope="col">Ações</th>
       </tr>
     </thead>
@@ -41,6 +43,7 @@ async function handleDelete(subscriberId) {
       <tr class="align-middle" v-for="subscriber in subscribers">
         <th scope="row">{{ subscriber.id }}</th>
         <td>{{ subscriber.name }}</td>
+        <td>{{ calculateAge(new Date(subscriber.birthday)) }}</td>
         <td>{{ subscriber.location?.name }}</td>
         <td>{{ subscriber.document }}</td>
         <td v-if="subscriber.isUpdated">
