@@ -13,7 +13,8 @@ export function generatePdfReport({ title, description, thead, tbody, filename }
   autotable(doc, {
     head: thead,
     body: tbody,
-    startY: 36
+    startY: 36,
+    bodyStyles: { fontSize: 9 },
   })
   doc.save(`${filename}.pdf`)
 }
