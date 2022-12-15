@@ -19,8 +19,8 @@ onMounted(() => {
 })
 
 async function fetchActiveSubscribers() {
-  const { data } = await api.get('/subscribers')
-  subscribers.value = data
+  const { data } = await api.get('/subscribers?limit=99999')
+  subscribers.value = data.subscribers
 }
 
 async function handleSubmit(ev) {
