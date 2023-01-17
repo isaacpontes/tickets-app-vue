@@ -1,4 +1,15 @@
+import { api } from "./api"
 import { generatePdfReport } from "./pdf"
+
+export async function getAll() {
+  try {
+    const response = await api.get("/boards")
+    return response.data
+  } catch (err) {
+    alert(err.message)
+    return []
+  }
+}
 
 export function generateMonthlyBoardsReport(boards, month, year) {
   const date = month && year ? new Date(year, month - 1) : new Date()
