@@ -1,13 +1,14 @@
 import { api } from './api'
 import { generatePdfReport } from './pdf'
 
-export async function fetchAllInventories() {
+export async function getAll() {
   try {
     const { data } = await api.get('/inventories')
     return data
   } catch (err) {
     console.error(err.response?.data?.message || err.message)
     alert('Ocorreu um erro ao obter os dados dos estoques.')
+    return []
   }
 }
 

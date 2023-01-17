@@ -1,14 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { fetchAllInventories } from '../services/inventories'
 import InventoriesTable from '../components/InventoriesTable.vue'
 import AddRepositionModal from '../components/AddRepositionModal.vue';
 import AddWithdrawalModal from '../components/AddWithdrawalModal.vue';
+import { getAll } from '../services/inventories';
 
 const inventories = ref([])
 
 async function fetchInventories() {
-  inventories.value = await fetchAllInventories()
+  inventories.value = await getAll()
 }
 
 onMounted(() => {

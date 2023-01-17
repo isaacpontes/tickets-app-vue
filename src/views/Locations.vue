@@ -1,10 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { Modal } from 'bootstrap'
-// import LocationsGrid from '../components/LocationsGrid.vue'
 import AddLocationModal from '../components/AddLocationModal.vue';
 import LocationsTable from '../components/LocationsTable.vue';
-import { fetchAllLocations } from '../services/locations';
+import { getAll } from '../services/locations';
 
 const locations = ref([])
 
@@ -12,8 +10,12 @@ function addLocation(location) {
   locations.value = [...locations.value, location]
 }
 
+async function fetchLocations() {
+  locations.value = await getAll()
+}
+
 onMounted(() => {
-  fetchAllLocations().then(data => locations.value = data)
+  fetchLocations()
 })
 </script>
 
@@ -27,5 +29,4 @@ onMounted(() => {
   <hr>
   <AddLocationModal :add-location="addLocation" />
   <LocationsTable :locations="locations" />
-  <!-- <locations-grid :locations="locations" /> -->
 </template>
