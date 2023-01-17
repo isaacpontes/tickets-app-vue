@@ -1,23 +1,18 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
-import { api } from '../services/api';
 import NavLink from '../components/common/NavLink.vue';
 import BoardsTab from '../components/BoardsTab.vue';
 import InventoriesTab from '../components/InventoriesTab.vue';
 import ReportsTab from '../components/ReportsTab.vue';
+import { getGeneralMonthlyReport } from '../services/reports';
 
 const report = reactive({ inventories: [], boards: [] })
 const activeTab = ref('start')
 
 async function fetchReportData() {
-  try {
-    const response = await api.get('/reports/general/monthly')
-    console.log(response.data)
-    report.boards = response.data.boards
-    report.inventories = response.data.inventories
-  } catch (err) {
-    console.error(err.message)
-  }
+  const { boards, inventories } = await getGeneralMonthlyReport()
+  report.boards = boards
+  report.inventories = inventories
 }
 
 onMounted(() => {
