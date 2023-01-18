@@ -1,24 +1,18 @@
 <script setup>
-import { Modal } from 'bootstrap'
-import { api } from '../services/api';
+import { deleteSubscriber } from '../services/subscribers';
+import { useSubscriberStore } from '../stores/subscriber';
 import calculateAge from '../utils/calculateAge';
 import UpdateSubscriberModal from './UpdateSubscriberModal.vue'
 
-defineProps(['subscribers', 'locations'])
-const emit = defineEmits(['updateSubscriber', 'deleteSubscriber'])
-
-function handleUpdate(updatedSubscriber) {
-  const modalElement = document.querySelector(`#updateSubscriber${updatedSubscriber.id}Modal`)
-  Modal.getInstance(modalElement).hide()
-  emit('updateSubscriber', updatedSubscriber)
-}
+const subscriberStore = useSubscriberStore()
 
 async function handleDelete(subscriberId) {
   const confirmation = confirm("Tem certeza que deseja excluir este registro?\n\nATENÇÃO! ESSA É UMA AÇÃO IRREVERSÍVEL.")
   if (!confirmation) return
+
   try {
-    await api.delete(`/subscribers/${subscriberId}`)
-    emit('deleteSubscriber', subscriberId)
+    await deleteSubscriber(subscriberId)
+    subscriberStore.deleteSubscriber(subscriberId)
   } catch (err) {
     console.error(err.message)
     alert("Erro ao excluir contribuinte.")
@@ -40,7 +34,7 @@ async function handleDelete(subscriberId) {
       </tr>
     </thead>
     <tbody>
-      <tr class="align-middle" v-for="subscriber in subscribers">
+      <tr class="align-middle" v-for="subscriber in subscriberStore.subscribers">
         <th scope="row">{{ subscriber.id }}</th>
         <td>{{ subscriber.name }}</td>
         <td>{{ calculateAge(new Date(subscriber.birthday)) }}</td>
@@ -53,11 +47,7 @@ async function handleDelete(subscriberId) {
           <i class="bi bi-x-circle-fill text-danger"></i>
         </td>
         <td class="d-flex flex-column flex-md-row">
-          <UpdateSubscriberModal
-            :subscriber-to-update="subscriber"
-            :locations="locations"
-            @subscriber-updated="handleUpdate"
-          />
+          <UpdateSubscriberModal :subscriber-to-update="subscriber" />
           <button class="btn btn-sm btn-secondary mb-2 mb-md-0 me-md-2" data-bs-toggle="modal"
             :data-bs-target="`#updateSubscriber${subscriber.id}Modal`">
             <i class="bi bi-pencil-square pe-none me-2"></i>

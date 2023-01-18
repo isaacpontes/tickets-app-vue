@@ -1,5 +1,47 @@
+import { api } from './api'
 import { generatePdfReport } from './pdf'
 import calculateAge from '../utils/calculateAge'
+
+export async function getAllSubscribers(page = 1, limit = 20) {
+  try {
+    const response = await api.get(`/subscribers?page=${page}&limit=${limit}`)
+    return response.data
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao obter os dados dos usuários cadastrados.')
+    return { subscribers: [], total: 0 }
+  }
+}
+
+export async function getSubscribersByLocation(locationId, page = 1, limit = 20) {
+  try {
+    const response = await api.get(`/subscribers?locationId=${locationId}&page=${page}&limit=${limit}`)
+    return response.data
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao obter os dados dos usuários cadastrados.')
+    return { subscribers: [], total: 0 }
+  }
+}
+
+export async function updateSubscriber(subscriber) {
+  try {
+    await api.put(`/subscribers/${subscriber.id}`, {
+      name: subscriber.name,
+      birthday: subscriber.birthday,
+      document: subscriber.document,
+      isUpdated: subscriber.isUpdated,
+      locationId: subscriber.locationId
+    })
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao atualizar os dados do usuário.')
+  }
+}
+
+export async function deleteSubscriber(subscriberId) {
+  await api.delete(`/subscribers/${subscriberId}`)
+}
 
 export function generateTable(subscribers) {
   const allSubscribers = subscribers.map((sub, index) => {

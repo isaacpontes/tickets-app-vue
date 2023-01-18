@@ -1,11 +1,15 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { api } from '../services/api';
+import { reactive } from 'vue'
+import { updateSubscriber } from '../services/subscribers';
+import { useLocationStore } from '../stores/location';
+import { useSubscriberStore } from '../stores/subscriber';
 import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue';
 
-const props = defineProps(['subscriberToUpdate', 'locations'])
-const emit = defineEmits(['subscriberUpdated'])
+const subscriberStore = useSubscriberStore()
+const locationStore = useLocationStore()
+
+const props = defineProps(['subscriberToUpdate'])
 
 const subscriber = reactive({
   ...props.subscriberToUpdate,
@@ -18,15 +22,9 @@ const alert = reactive({ ...initialAlert })
 async function handleSubmit(ev) {
   ev.preventDefault()
   try {
-    await api.put(`/subscribers/${props.subscriberToUpdate.id}`, {
-      name: subscriber.name,
-      birthday: subscriber.birthday,
-      document: subscriber.document,
-      isUpdated: subscriber.isUpdated,
-      locationId: subscriber.locationId
-    })
+    await updateSubscriber(subscriber)
+    subscriberStore.updateSubscriber(subscriber)
     toggleAlert('Contribuinte atualizado com sucesso.', 'success')
-    emit('subscriberUpdated', subscriber)
   } catch (err) {
     const message = err.response?.data?.message || err.message
     toggleAlert(message, 'danger')
@@ -77,7 +75,7 @@ function toggleAlert(message, color = 'primary') {
         <div class="mb-3">
           <label for="locations" class="form-label">Local</label>
           <select v-model="subscriber.locationId" id="locations" class="form-select" aria-label="Lista de locais">
-            <option v-for="location in locations" :value="location.id" :key="location.id"
+            <option v-for="location in locationStore.locations" :value="location.id" :key="location.id"
               :selected="subscriberToUpdate.location?.id === location.id">
               {{ location.name }}
             </option>

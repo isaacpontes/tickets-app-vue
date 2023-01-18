@@ -1,97 +1,70 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { api } from '../services/api'
 import AddSubscriberModal from '../components/AddSubscriberModal.vue'
 import SubscribersTable from '../components/SubscribersTable.vue'
-import { downloadPdf } from '../services/subscribers'
 import Paginator from '../components/Paginator.vue';
+import { getAll } from '../services/locations';
+import { getAllSubscribers, getSubscribersByLocation, downloadPdf } from '../services/subscribers';
+import { useSubscriberStore } from '../stores/subscriber';
+import { useLocationStore } from '../stores/location';
 
-const subscribers = ref([])
-const filteredSubscribers = ref(null)
-const locations = ref([])
-const locationId = ref(0)
+const subscriberStore = useSubscriberStore()
+const locationStore = useLocationStore()
 const currentPage = ref(1)
 const currentLimit = ref(20)
-const subscribersTotal = ref(0)
 
 async function fetchLocations() {
-  const response = await api.get('/locations')
-  locations.value = response.data
+  const locations = await getAll()
+  locationStore.$patch({ locations: locations })
 }
 
-async function fetchSubscribers(locationId, page, limit) {
-  let response
-  if (locationId != 0) {
-    response = await api.get(`/subscribers?locationId=${locationId}&page=${page}&limit=${limit}`)
+async function fetchSubscribers() {
+  if (subscriberStore.currentLocation.id != 0) {
+    const { subscribers, total } = await getSubscribersByLocation(
+      subscriberStore.currentLocation.id,
+      currentPage.value,
+      currentLimit.value
+    )
+    subscriberStore.$patch({ subscribers, total })
   } else {
-    response = await api.get(`/subscribers?page=${page}&limit=${limit}`)
+    const { subscribers, total } = await getAllSubscribers(currentPage.value, currentLimit.value)
+    subscriberStore.$patch({ subscribers, total })
   }
-  subscribers.value = response.data.subscribers
-  subscribersTotal.value = response.data.total
-}
-
-function addSubscriber(subscriber) {
-  subscribers.value = [...subscribers.value, subscriber]
-}
-
-function updateSubscriber(subscriber) {
-  const updatedSubscribers = subscribers.value.map(sub => sub.id === subscriber.id ? subscriber : sub)
-  subscribers.value = updatedSubscribers
-}
-
-function deleteSubscriber(subscriberId) {
-  const updatedSubscribers = subscribers.value.filter(subscriber => subscriber.id !== subscriberId)
-  subscribers.value = updatedSubscribers
 }
 
 function handleFilterByLocation(ev) {
-  locationId.value = ev.currentTarget.dataset.locationId
-  fetchSubscribers(ev.currentTarget.dataset.locationId, currentPage.value, currentLimit.value)
-}
-
-function handleFilterByName(ev) {
-  const name = ev.currentTarget.value
-  if (name.length >= 3) {
-    filteredSubscribers.value = subscribers.value.filter(sub => sub.name.match(new RegExp(name, 'gi')))
-  } else {
-    filteredSubscribers.value = null
-  }
-}
-
-function handleDownload() {
-  let location = 'Todos'
-  if (locationId.value != 0) {
-    location = locations.value.find(l => l.id == locationId.value)?.name
-  }
-  downloadPdf(subscribers.value, location)
+  const { locationId } = ev.currentTarget.dataset
+  const { id, name } = locationStore.getLocationById(locationId) ?? { id: 0, name: 'Todos' }
+  subscriberStore.$patch({ currentLocation: { id, name } })
+  fetchSubscribers()
 }
 
 function handlePreviousPage() {
   currentPage.value--
-  fetchSubscribers(locationId.value, currentPage.value, currentLimit.value)
+  fetchSubscribers()
 }
 
 function handleNextPage() {
   currentPage.value++
-  fetchSubscribers(locationId.value, currentPage.value, currentLimit.value)
+  fetchSubscribers()
 }
 
 function handleChangePageTo(page) {
   currentPage.value = page
-  fetchSubscribers(locationId.value, currentPage.value, currentLimit.value)
+  fetchSubscribers()
 }
 
 function handleChangeLimit(ev) {
   currentLimit.value = parseFloat(ev.target.value)
-  fetchSubscribers(locationId.value, currentPage.value, currentLimit.value)
+  fetchSubscribers()
 }
 
 const resultsCountMessage = computed(() => {
-  return `Exibindo ${subscribers.value.length} de ${subscribersTotal.value} contribuintes.`
+  return `Exibindo ${subscriberStore.subscribers.length} de ${subscriberStore.total} contribuintes.`
 })
 
 onMounted(() => {
-  fetchSubscribers(0, currentPage.value, currentLimit.value)
+  fetchSubscribers()
   fetchLocations()
 })
 
@@ -103,25 +76,25 @@ onMounted(() => {
     <button class="btn btn-primary me-2" type="button" data-bs-toggle="modal" data-bs-target="#addSubscriberModal">
       Novo contribuinte
     </button>
-    <button class="btn btn-secondary" type="button" @click="handleDownload">
+    <button class="btn btn-secondary" type="button" @click="() => downloadPdf(subscriberStore.subscribers, subscriberStore.currentLocation.name)">
       Exportar como PDF
     </button>
   </div>
   <hr>
-  <AddSubscriberModal :add-subscriber="addSubscriber" />
+  <AddSubscriberModal />
   <section class="mb-4">
     <h2 class="fs-4">Filtrar</h2>
     <div class="mb-2">
       <button
-        :class="`btn btn-sm btn-${locationId == 0 ? 'secondary' : 'light'} me-2 mb-2`"
-        data-location-id="0"
+        :class="`btn btn-sm btn-${subscriberStore.currentLocation.id == 0 ? 'secondary' : 'light'} me-2 mb-2`"
+        :data-location-id="0"
         @click="handleFilterByLocation"
       >
         Todos
       </button>
       <button
-        v-for="location in locations"
-        :class="`btn btn-sm btn-${location.id == locationId ? 'secondary' : 'light'} me-2 mb-2`"
+        v-for="location in locationStore.locations"
+        :class="`btn btn-sm btn-${location.id === subscriberStore.currentLocation.id ? 'secondary' : 'light'} me-2 mb-2`"
         :data-location-id="location.id"
         @click="handleFilterByLocation"
       >
@@ -151,17 +124,12 @@ onMounted(() => {
     </div>
   </div>
 
-  <SubscribersTable
-    :subscribers="filteredSubscribers ?? subscribers"
-    :locations="locations"
-    @update-subscriber="updateSubscriber"
-    @delete-subscriber="deleteSubscriber"
-  />
+  <SubscribersTable />
 
   <Paginator
     :current-page="currentPage"
     :current-limit="currentLimit"
-    :total="subscribersTotal"
+    :total="subscriberStore.total"
     :handle-previous-page="handlePreviousPage"
     :handle-next-page="handleNextPage"
     :handle-change-page-to="handleChangePageTo"
