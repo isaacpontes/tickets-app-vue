@@ -3,6 +3,10 @@ import { reactive } from 'vue'
 import { api } from '../services/api'
 import { generateMonthlyBoardsReport } from '../services/boards'
 import { generateMonthlyInventoriesReport } from '../services/inventories'
+import Button from './common/Button.vue';
+import H2 from './common/H2.vue';
+import Input from './common/Input.vue';
+import Label from './common/Label.vue';
 
 const props = defineProps(['boards', 'inventories'])
 const boardsReport = reactive({ boards: [], month: 8, year: 2022 })
@@ -43,14 +47,13 @@ async function handleInventoriesReport(ev) {
 
 <template>
   <section class="pt-3 px-2">
-    <h2 class="fs-4">Relatório Mensal de Mesa</h2>
+    <H2>Relatório Mensal de Mesa</H2>
     <form v-on:submit="handleBoardsReport" class="row align-items-end mb-4">
       <div class="col col-md-4 col-lg-3 col-xl-2 mb-4 mb-md-0">
-        <label for="month" class="form-label">Mês</label>
-        <input
-          v-model="boardsReport.month"
+        <Label for="month" class="form-label">Mês</Label>
+        <Input
           id="month"
-          class="form-control"
+          v-model="boardsReport.month"
           type="number"
           min="1"
           max="12"
@@ -58,11 +61,10 @@ async function handleInventoriesReport(ev) {
         />
       </div>
       <div class="col col-md-4 col-lg-3 col-xl-2 mb-4 mb-md-0">
-        <label for="year" class="form-label">Ano</label>
-        <input
-          v-model="boardsReport.year"
+        <Label for="year">Ano</Label>
+        <Input
           id="year"
-          class="form-control"
+          v-model="boardsReport.year"
           type="number"
           min="2000"
           max="2999"
@@ -70,7 +72,7 @@ async function handleInventoriesReport(ev) {
         />
       </div>
       <div class="col col-12 col-md-4 col-lg-3 col-xl-2">
-        <button class="btn btn-primary">Gerar PDF</button>
+        <Button>Gerar PDF</Button>
       </div>
     </form>
   </section>
@@ -78,11 +80,10 @@ async function handleInventoriesReport(ev) {
     <h2 class="fs-4">Relatório Mensal de Estoque</h2>
     <form v-on:submit="handleInventoriesReport" class="row align-items-end mb-4">
       <div class="col col-md-4 col-lg-3 col-xl-2 mb-4 mb-md-0">
-        <label for="month" class="form-label">Mês</label>
-        <input
-          v-model="inventoriesReport.month"
+        <Label for="month">Mês</Label>
+        <Input
           id="month"
-          class="form-control"
+          v-model="inventoriesReport.month"
           type="number"
           min="1"
           max="12"
@@ -90,11 +91,10 @@ async function handleInventoriesReport(ev) {
         />
       </div>
       <div class="col col-md-4 col-lg-3 col-xl-2 mb-4 mb-md-0">
-        <label for="year" class="form-label">Ano</label>
-        <input
-          v-model="inventoriesReport.year"
+        <Label for="year">Ano</Label>
+        <Input
           id="year"
-          class="form-control"
+          v-model="inventoriesReport.year"
           type="number"
           min="2000"
           max="2999"
@@ -102,7 +102,7 @@ async function handleInventoriesReport(ev) {
         />
       </div>
       <div class="col col-12 col-md-4 col-lg-3 col-xl-2">
-        <button class="btn btn-primary">Gerar PDF</button>
+        <Button>Gerar PDF</Button>
       </div>
     </form>
   </section>

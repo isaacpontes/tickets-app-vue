@@ -5,6 +5,10 @@ import { useLocationStore } from '../stores/location';
 import { useSubscriberStore } from '../stores/subscriber';
 import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue';
+import Label from './common/Label.vue';
+import Input from './common/Input.vue';
+import ModalHeader from './common/ModalHeader.vue';
+import ModalFooter from './common/ModalFooter.vue';
 
 const subscriberStore = useSubscriberStore()
 const locationStore = useLocationStore()
@@ -43,10 +47,7 @@ function toggleAlert(message, color = 'primary') {
 
 <template>
   <Modal :id="`updateSubscriber${subscriberToUpdate.id}Modal`">
-    <template #header>
-      <h5 class="modal-title" :id="`updateSubscriber${subscriberToUpdate.id}ModalLabel`">Atualizar contribuinte</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </template>
+    <ModalHeader title="Atualizar contribuinte" />
 
     <form v-on:submit="handleSubmit">
       <div class="modal-body">
@@ -54,38 +55,62 @@ function toggleAlert(message, color = 'primary') {
         <hr>
         <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
         <div class="mb-3">
-          <label for="name" class="form-label">Nome Completo</label>
-          <input v-model="subscriber.name" type="text" class="form-control" id="name"
-            placeholder="Ex.: João Francisco da Silva" required>
+          <Label for="name">Nome Completo</Label>
+          <Input
+            id="name"
+            v-model="subscriber.name"
+            placeholder="Ex.: João Francisco da Silva"
+            required
+          />
         </div>
         <div class="mb-3">
-          <label for="birthday" class="form-label">Data de Nascimento</label>
-          <input v-model="subscriber.birthday" type="date" class="form-control" id="birthday" required>
+          <Label for="birthday">Data de Nascimento</Label>
+          <Input
+            id="birthday"
+            type="date"
+            v-model="subscriber.birthday"
+            required
+          />
         </div>
         <div class="mb-3">
-          <label for="document" class="form-label">CPF</label>
-          <input v-model="subscriber.document" type="text" class="form-control" id="document"
-            placeholder="Digite somente números" required>
+          <Label for="document">CPF</Label>
+          <Input
+            id="document"
+            v-model="subscriber.document"
+            placeholder="Digite somente números"
+            required
+          />
         </div>
         <div class="mb-3 form-check form-switch">
-          <input v-model="subscriber.isUpdated" type="checkbox" class="form-check-input" role="switch"
-            id="isUpdatedSwitch">
-          <label class="form-check-label" for="isUpdatedSwitch">Dados Atualizados?</label>
+          <input
+            v-model="subscriber.isUpdated"
+            type="checkbox"
+            class="form-check-input"
+            role="switch"
+            id="isUpdatedSwitch"
+          />
+          <Label class="form-check-label" for="isUpdatedSwitch">Dados Atualizados?</Label>
         </div>
         <div class="mb-3">
-          <label for="locations" class="form-label">Local</label>
-          <select v-model="subscriber.locationId" id="locations" class="form-select" aria-label="Lista de locais">
-            <option v-for="location in locationStore.locations" :value="location.id" :key="location.id"
-              :selected="subscriberToUpdate.location?.id === location.id">
+          <Label for="locations">Local</Label>
+          <select
+            id="locations"
+            class="form-select"
+            aria-label="Lista de locais"
+            v-model="subscriber.locationId"
+          >
+            <option
+              v-for="location in locationStore.locations"
+              :value="location.id"
+              :key="location.id"
+              :selected="subscriberToUpdate.location?.id === location.id"
+            >
               {{ location.name }}
             </option>
           </select>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="submit" class="btn btn-primary">Salvar</button>
-      </div>
+      <ModalFooter confirm-button-text="Salvar" />
     </form>
   </Modal>
 </template>

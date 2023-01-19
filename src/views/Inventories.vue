@@ -4,6 +4,7 @@ import InventoriesTable from '../components/InventoriesTable.vue'
 import AddRepositionModal from '../components/AddRepositionModal.vue';
 import AddWithdrawalModal from '../components/AddWithdrawalModal.vue';
 import { getAll } from '../services/inventories';
+import Button from '../components/common/Button.vue';
 
 const inventories = ref([])
 
@@ -20,12 +21,12 @@ onMounted(() => {
 <template>
   <div class="d-flex align-items-center">
     <h1 class="me-4">Estoques</h1>
-    <button class="btn btn-primary me-2" type="button" data-bs-toggle="modal" data-bs-target="#addWithdrawalModal">
+    <Button class=" me-2" data-bs-toggle="modal" data-bs-target="#addWithdrawalModal">
       Retirar tickets
-    </button>
-    <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#addRepositionModal">
+    </Button>
+    <Button color="secondary" data-bs-toggle="modal" data-bs-target="#addRepositionModal">
       Adicionar tickets
-    </button>
+    </Button>
   </div>
   <hr>
   <AddWithdrawalModal

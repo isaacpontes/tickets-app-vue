@@ -2,7 +2,11 @@
 import { onMounted, reactive, ref } from 'vue'
 import { api } from '../services/api'
 import Alert from './common/Alert.vue'
+import Input from './common/Input.vue';
+import Label from './common/Label.vue';
 import Modal from './common/Modal.vue'
+import ModalFooter from './common/ModalFooter.vue';
+import ModalHeader from './common/ModalHeader.vue';
 
 const props = defineProps(['boards'])
 const emit = defineEmits(['requestAdded'])
@@ -51,26 +55,23 @@ function toggleAlert(message, color = 'primary') {
 
 <template>
   <Modal id="addTicketRequestModal">
-    <template #header>
-      <h5 class="modal-title" id="addTicketRequestModalLabel">Adicionar requisição de tickets</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </template>
+    <ModalHeader title="Adicionar requisição de tickets" />
+
     <form v-on:submit="handleSubmit">
       <div class="modal-body">
         <span class="text-secondary">Adiciona uma requisição de tickets, retirando a quantidade de um local específico na mesa.</span>
         <hr>
         <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
         <div class="mb-3">
-          <label for="quantity" class="form-label">Quantidade de Tickets</label>
-          <input v-model="request.quantity" type="number" class="form-control" id="quantity" placeholder="1000"
-            required>
+          <Label for="quantity">Quantidade de Tickets</Label>
+          <Input v-model="request.quantity" type="number" id="quantity" placeholder="1000" required />
         </div>
         <div class="mb-3">
-          <label for="date" class="form-label">Data da Requisição</label>
-          <input v-model="request.date" type="date" class="form-control" id="date">
+          <Label for="date">Data da Requisição</Label>
+          <Input v-model="request.date" type="date" id="date"/>
         </div>
         <div class="mb-3">
-          <label for="subscriberId" class="form-label">Contribuintes</label>
+          <Label for="subscriberId">Contribuintes</Label>
           <select v-model="request.subscriberId" class="form-select" aria-label="Lista de locais" id="subscriberId">
             <option selected value="0" disabled>Selecione um contribuinte...</option>
             <option v-for="subscriber in subscribers" :value="subscriber.id" :key="subscriber.id">
@@ -79,7 +80,7 @@ function toggleAlert(message, color = 'primary') {
           </select>
         </div>
         <div class="mb-3">
-          <label for="boardId" class="form-label">Locais na Mesa</label>
+          <Label for="boardId">Locais na Mesa</Label>
           <select v-model="request.boardId" class="form-select" aria-label="Lista de locais" id="boardId">
             <option selected value="0" disabled>Selecione um local...</option>
             <option v-for="board in boards" :value="board.id" :key="board.id">
@@ -88,10 +89,7 @@ function toggleAlert(message, color = 'primary') {
           </select>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="submit" class="btn btn-primary">Salvar Reposição</button>
-      </div>
+      <ModalFooter confirm-button-text="Salvar Reposição"/>
     </form>
   </Modal>
 </template>

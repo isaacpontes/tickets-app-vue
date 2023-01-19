@@ -1,5 +1,9 @@
 <script setup>
 import { generatePdfReport } from '../services/pdf'
+import Button from './common/Button.vue';
+import Card from './common/Card.vue';
+import H2 from './common/H2.vue';
+import H3 from './common/H3.vue';
 
 const props = defineProps(['boards'])
 
@@ -32,32 +36,30 @@ function download() {
 
 <template>
   <section class="py-3 px-2">
-    <h2 class="fs-4">Mesa</h2>
+    <H2>Mesa</H2>
     <p>Balanço geral dos tickets da mesa referente ao mês atual até o dia de hoje ({{ today }}).</p>
-    <button class="btn btn-primary mb-4" @click="download">Exportar PDF</button>
+    <Button class="mb-4" @click="download">Exportar PDF</Button>
     <div class="row">
       <div v-for="entry in boards" class="col col-6 col-lg-4 mb-4">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="fs-6">{{ entry.board?.location?.name }}</h3>
-            <div class="d-flex align-items-center justify-content-between">
-              <span>Saldo Anterior: </span>
-              <span>{{ entry.previousTickets }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <span>Entradas: </span>
-              <span>{{ entry.ticketsWithdrawn }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <span>Saídas: </span>
-              <span>{{ entry.ticketsRequested }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <span>Saldo Atual: </span>
-              <span>{{ entry.finalTickets }}</span>
-            </div>
+        <Card>
+          <H3>{{ entry.board?.location?.name }}</H3>
+          <div class="d-flex align-items-center justify-content-between">
+            <span>Saldo Anterior: </span>
+            <span>{{ entry.previousTickets }}</span>
           </div>
-        </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <span>Entradas: </span>
+            <span>{{ entry.ticketsWithdrawn }}</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <span>Saídas: </span>
+            <span>{{ entry.ticketsRequested }}</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <span>Saldo Atual: </span>
+            <span>{{ entry.finalTickets }}</span>
+          </div>
+        </Card>
       </div>
     </div>
   </section>

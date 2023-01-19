@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import AddLocationModal from '../components/AddLocationModal.vue';
+import Button from '../components/common/Button.vue';
 import LocationsTable from '../components/LocationsTable.vue';
 import { getAll } from '../services/locations';
 
@@ -22,9 +23,9 @@ onMounted(() => {
 <template>
   <div class="d-flex align-items-center">
     <h1 class="me-4">Locais</h1>
-    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+    <Button data-bs-toggle="modal" data-bs-target="#addLocationModal">
       Novo local
-    </button>
+    </Button>
   </div>
   <hr>
   <AddLocationModal :add-location="addLocation" />

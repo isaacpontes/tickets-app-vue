@@ -1,11 +1,13 @@
 <script setup>
 import { reactive, ref } from 'vue'
-import { api } from '../services/api';
 import { createLocation } from '../services/locations';
 import Alert from './common/Alert.vue'
+import Input from './common/Input.vue';
+import Label from './common/Label.vue';
 import Modal from './common/Modal.vue'
 import ModalBody from './common/ModalBody.vue'
 import ModalFooter from './common/ModalFooter.vue'
+import ModalHeader from './common/ModalHeader.vue';
 
 const props = defineProps(['addLocation'])
 
@@ -35,10 +37,7 @@ function toggleAlert(message, color = 'primary') {
 
 <template>
   <Modal id="addLocationModal">
-    <template #header>
-      <h5 class="modal-title" id="addLocationModalLabel">Adicionar novo local</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </template>
+    <ModalHeader title="Adicionar novo local" />
 
     <form v-on:submit="handleSubmit">
       <ModalBody>
@@ -46,15 +45,11 @@ function toggleAlert(message, color = 'primary') {
         <hr>
         <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
         <div class="mb-3">
-          <label for="locationName" class="form-label">Nome do Local</label>
-          <input v-model="locationName" type="text" class="form-control" id="locationName" placeholder="Ex.: Centro"
-            required>
+          <Label for="locationName">Nome do Local</Label>
+          <Input v-model="locationName" id="locationName" placeholder="Ex.: Centro" required />
         </div>
       </ModalBody>
-      <ModalFooter>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="submit" class="btn btn-primary">Criar Local</button>
-      </ModalFooter>
+      <ModalFooter confirm-button-text="Criar Local" />
     </form>
   </Modal>
 </template>

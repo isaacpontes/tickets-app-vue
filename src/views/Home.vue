@@ -5,6 +5,7 @@ import BoardsTab from '../components/BoardsTab.vue';
 import InventoriesTab from '../components/InventoriesTab.vue';
 import ReportsTab from '../components/ReportsTab.vue';
 import { getGeneralMonthlyReport } from '../services/reports';
+import H2 from '../components/common/H2.vue';
 
 const report = reactive({ inventories: [], boards: [] })
 const activeTab = ref('start')
@@ -38,7 +39,7 @@ onMounted(() => {
     </li>
   </nav>
   <section v-if="activeTab === 'start'" class="py-3 px-2">
-    <h2 class="fs-4">Olá! 👋</h2>
+    <H2>Olá! 👋</H2>
   </section>
   <BoardsTab v-if="activeTab === 'boards'" :boards="report.boards" />
   <InventoriesTab v-if="activeTab === 'inventories'" :inventories="report.inventories" />

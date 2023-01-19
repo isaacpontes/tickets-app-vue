@@ -2,7 +2,11 @@
 import { reactive } from 'vue'
 import { api } from '../services/api'
 import Alert from './common/Alert.vue'
+import Input from './common/Input.vue';
+import Label from './common/Label.vue';
 import Modal from './common/Modal.vue'
+import ModalFooter from './common/ModalFooter.vue';
+import ModalHeader from './common/ModalHeader.vue';
 
 const props = defineProps(['inventories'])
 const emit = defineEmits(['withdraw'])
@@ -50,54 +54,50 @@ function toggleAlert(message, color = 'primary') {
 
 <template>
   <Modal id="addWithdrawalModal">
-    <template #header>
-      <h5 class="modal-title" id="addWithdrawalModalLabel">Retirar tickets</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </template>
+    <ModalHeader title="Retirar tickets" />
+
     <form v-on:submit="handleSubmit">
       <div class="modal-body">
         <span class="text-secondary">Retira tickets do estoque e adiciona-os na mesa.</span>
         <hr>
         <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
         <div class="mb-3">
-          <label for="quantity" class="form-label">Quantidade de Tickets</label>
-          <input v-model="withdrawal.quantity" type="number" class="form-control" id="quantity" placeholder="1000"
-            required>
+          <Label for="quantity">Quantidade de Tickets</Label>
+          <Input id="quantity" type="number" placeholder="1000" required v-model="withdrawal.quantity" />
         </div>
         <div class="mb-3">
-          <label for="date" class="form-label">Data da Retirada</label>
-          <input v-model="withdrawal.date" type="date" class="form-control" id="date">
+          <Label for="date">Data da Retirada</Label>
+          <Input id="date" type="date" v-model="withdrawal.date" />
         </div>
         <div class="row mb-3">
           <div class="col col-6">
-            <label for="firstTicket" class="form-label">Nº do Primeiro Ticket</label>
-            <input v-model="withdrawal.firstTicket" type="text" class="form-control" id="firstTicket"
-              placeholder="1001" />
+            <Label for="firstTicket">Nº do Primeiro Ticket</Label>
+            <Input id="firstTicket" placeholder="1001" v-model="withdrawal.firstTicket" />
           </div>
           <div class="col col-6">
-            <label for="lastTicket" class="form-label">Nº do Último Ticket</label>
-            <input v-model="withdrawal.lastTicket" type="text" class="form-control" id="lastTicket"
-              placeholder="2000" />
+            <Label for="lastTicket">Nº do Último Ticket</Label>
+            <Input id="lastTicket" placeholder="2000" v-model="withdrawal.lastTicket" />
           </div>
         </div>
         <div class="mb-3">
-          <label for="observations" class="form-label">Observações</label>
+          <Label for="observations">Observações</Label>
           <textarea v-model="withdrawal.observations" class="form-control" id="observations"></textarea>
         </div>
         <div class="mb-3">
-          <label for="inventoriesList" class="form-label">Estoques</label>
+          <Label for="inventoriesList">Estoques</Label>
           <select v-model="withdrawal.inventoryId" class="form-select" aria-label="Lista de estoques">
             <option selected value="0" disabled>Selecione um estoque...</option>
-            <option v-for="inventory in inventories" :value="inventory.id" :key="inventory.id">
+            <option
+              v-for="inventory in inventories"
+              :value="inventory.id"
+              :key="inventory.id"
+            >
               {{ inventory.location.name }}
             </option>
           </select>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="submit" class="btn btn-primary">Retirar Tickets</button>
-      </div>
+      <ModalFooter confirm-button-text="Retirar Tickets"/>
     </form>
   </Modal>
 </template>

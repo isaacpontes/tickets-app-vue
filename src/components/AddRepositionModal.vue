@@ -2,9 +2,12 @@
 import { reactive } from 'vue'
 import { api } from '../services/api'
 import Alert from './common/Alert.vue'
+import Input from './common/Input.vue'
+import Label from './common/Label.vue'
 import Modal from './common/Modal.vue'
 import ModalBody from './common/ModalBody.vue'
 import ModalFooter from './common/ModalFooter.vue'
+import ModalHeader from './common/ModalHeader.vue'
 
 const props = defineProps(['inventories'])
 const emit = defineEmits(['repositionAdded'])
@@ -42,30 +45,27 @@ function toggleAlert(message, color = 'primary') {
 
 <template>
   <Modal id="addRepositionModal">
-    <template #header>
-      <h5 class="modal-title" id="addRepositionModalLabel">Adicionar tickets</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </template>
+    <ModalHeader title="Adicionar tickets" />
+
     <form v-on:submit="handleSubmit">
       <ModalBody>
         <span class="text-secondary">Adiciona uma reposição de tickets ao estoque.</span>
         <hr>
         <Alert :show="alert.show" :color="alert.color" :message="alert.message" />
         <div class="mb-3">
-          <label for="quantity" class="form-label">Quantidade de Tickets</label>
-          <input v-model="reposition.quantity" type="number" class="form-control" id="quantity" placeholder="1000"
-            required>
+          <Label for="quantity">Quantidade de Tickets</Label>
+          <Input v-model="reposition.quantity" type="number" id="quantity" placeholder="1000" required />
         </div>
         <div class="mb-3">
-          <label for="date" class="form-label">Data da Reposição</label>
-          <input v-model="reposition.date" type="date" class="form-control" id="date">
+          <Label for="date">Data da Reposição</Label>
+          <Input v-model="reposition.date" type="date" id="date" />
         </div>
         <div class="mb-3">
-          <label for="observations" class="form-label">Observações</label>
-          <textarea v-model="reposition.observations" class="form-control" id="observations"></textarea>
+          <Label for="observations">Observações</Label>
+          <textarea v-model="reposition.observations" id="observations"></textarea>
         </div>
         <div class="mb-3">
-          <label for="inventoriesList" class="form-label">Estoques</label>
+          <Label for="inventoriesList">Estoques</Label>
           <select v-model="reposition.inventoryId" class="form-select" aria-label="Lista de estoques">
             <option selected value="0" disabled>Selecione um estoque...</option>
             <option v-for="inventory in inventories" :value="inventory.id" :key="inventory.id">
@@ -74,10 +74,7 @@ function toggleAlert(message, color = 'primary') {
           </select>
         </div>
       </ModalBody>
-      <ModalFooter>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="submit" class="btn btn-primary">Adicionar Reposição</button>
-      </ModalFooter>
+      <ModalFooter confirm-button-text="Adicionar Reposição" />
     </form>
   </Modal>
 </template>
