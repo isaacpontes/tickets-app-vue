@@ -1,7 +1,7 @@
 <script setup>
 defineProps({
   type: { type: String, default: "text" },
-  modelValue: String
+  modelValue: [String, Number]
 })
 defineEmits(['update:modelValue'])
 </script>
