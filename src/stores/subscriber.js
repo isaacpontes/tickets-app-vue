@@ -16,6 +16,9 @@ export const useSubscriberStore = defineStore('subscribers', {
     },
     deleteSubscriber(id) {
       this.subscribers = this.subscribers.filter(subscriber => subscriber.id !== id)
+    },
+    resetLocation() {
+      this.currentLocation = { id: 0, name: 'Todos' }
     }
   }
 })

@@ -15,7 +15,7 @@ export async function getAllSubscribers(page = 1, limit = 20) {
 
 export async function getSubscribersByLocation(locationId, page = 1, limit = 20) {
   try {
-    const response = await api.get(`/subscribers?locationId=${locationId}&page=${page}&limit=${limit}`)
+    const response = await api.get(`/locations/${locationId}/subscribers?page=${page}&limit=${limit}`)
     return response.data
   } catch (err) {
     console.error(err.response?.data?.message || err.message)

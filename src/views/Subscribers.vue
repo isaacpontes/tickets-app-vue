@@ -4,12 +4,11 @@ import AddSubscriberModal from '../components/AddSubscriberModal.vue'
 import SubscribersTable from '../components/SubscribersTable.vue'
 import Paginator from '../components/Paginator.vue';
 import { getAll } from '../services/locations';
-import { getAllSubscribers, getSubscribersByLocation, downloadPdf } from '../services/subscribers';
+import { getAllSubscribers, downloadPdf } from '../services/subscribers';
 import { useSubscriberStore } from '../stores/subscriber';
 import { useLocationStore } from '../stores/location';
 import Button from '../components/common/Button.vue';
-import H2 from '../components/common/H2.vue';
-import Input from '../components/common/Input.vue';
+import FilterSubscribersSection from '../components/FilterSubscribersSection.vue';
 
 const subscriberStore = useSubscriberStore()
 const locationStore = useLocationStore()
@@ -22,24 +21,8 @@ async function fetchLocations() {
 }
 
 async function fetchSubscribers() {
-  if (subscriberStore.currentLocation.id != 0) {
-    const { subscribers, total } = await getSubscribersByLocation(
-      subscriberStore.currentLocation.id,
-      currentPage.value,
-      currentLimit.value
-    )
-    subscriberStore.$patch({ subscribers, total })
-  } else {
-    const { subscribers, total } = await getAllSubscribers(currentPage.value, currentLimit.value)
-    subscriberStore.$patch({ subscribers, total })
-  }
-}
-
-function handleFilterByLocation(ev) {
-  const { locationId } = ev.currentTarget.dataset
-  const { id, name } = locationStore.getLocationById(locationId) ?? { id: 0, name: 'Todos' }
-  subscriberStore.$patch({ currentLocation: { id, name } })
-  fetchSubscribers()
+  const { subscribers, total } = await getAllSubscribers(currentPage.value, currentLimit.value)
+  subscriberStore.$patch({ subscribers, total })
 }
 
 function handlePreviousPage() {
@@ -85,33 +68,7 @@ onMounted(() => {
   </div>
   <hr>
   <AddSubscriberModal />
-  <section class="mb-4">
-    <H2>Filtrar</H2>
-    <div class="mb-2">
-      <Button
-        :color="subscriberStore.currentLocation.id == 0 ? 'secondary' : 'light'"
-        size="sm"
-        class="me-1 mb-1 px-1 py-0"
-        :data-location-id="0"
-        @click="handleFilterByLocation"
-      >
-        Todos
-      </Button>
-      <Button
-        v-for="location in locationStore.locations"
-        :color="subscriberStore.currentLocation.id == location.id ? 'secondary' : 'light'"
-        size="sm"
-        class="me-1 mb-1 px-1 py-0"
-        :data-location-id="location.id"
-        @click="handleFilterByLocation"
-      >
-        {{ location.name }}
-      </Button>
-    </div>
-    <div>
-      <Input @keyup="handleFilterByName" placeholder="Digite um nome para pesquisar..." />
-    </div>
-  </section>
+  <FilterSubscribersSection @reset-location="fetchSubscribers" />
 
   <div class="row mb-3">
     <div class="col col-md-6 py-1">
