@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { createLocation } from '../services/locations';
+import { useLocationStore } from '../stores/location';
 import Alert from './common/Alert.vue'
 import Input from './common/Input.vue';
 import Label from './common/Label.vue';
@@ -9,7 +10,7 @@ import ModalBody from './common/ModalBody.vue'
 import ModalFooter from './common/ModalFooter.vue'
 import ModalHeader from './common/ModalHeader.vue';
 
-const props = defineProps(['addLocation'])
+const locationStore = useLocationStore()
 
 const locationName = ref('')
 const initialState = { show: false, message: '', color: 'primary' }
@@ -19,7 +20,7 @@ async function handleSubmit(ev) {
   ev.preventDefault()
   const data = await createLocation(locationName.value)
   if (data) {
-    props.addLocation(data.location)
+    locationStore.addLocation(data.location)
     locationName.value = ''
     toggleAlert('Local criado com sucesso.', 'success')
   }

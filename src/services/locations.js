@@ -20,3 +20,12 @@ export async function createLocation(name) {
     alert('Ocorreu um erro ao criar a localidade.')
   }
 }
+
+export async function deleteLocation(id) {
+  try {
+    await api.delete(`/locations/${id}`)
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao excluir a localidade.')
+  }
+}

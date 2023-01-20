@@ -9,6 +9,9 @@ export const useLocationStore = defineStore('locations', {
     addLocation(location) {
       this.locations.push(location)
     },
+    deleteLocation(id) {
+      this.locations = this.locations.filter(l => l.id !== id)
+    },
     getLocationById(id) {
       return this.locations.find(l => l.id == id)
     }
