@@ -14,7 +14,7 @@ import PageQuantitySelector from '../components/PageQuantitySelector.vue';
 const subscriberStore = useSubscriberStore()
 const locationStore = useLocationStore()
 const currentPage = ref(1)
-const currentLimit = ref(4)
+const currentLimit = ref(20)
 
 async function fetchLocations() {
   const locations = await getAll()
