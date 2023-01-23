@@ -48,8 +48,8 @@ function handleResetLocation() {
         {{ location.name }}
       </Button>
     </div>
-    <div>
+    <!-- <div>
       <Input @keyup="handleFilterByName" placeholder="Digite um nome para pesquisar..." />
-    </div>
+    </div> -->
   </section>
 </template>
