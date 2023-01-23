@@ -7,6 +7,8 @@ import H3 from './common/H3.vue';
 
 const props = defineProps(['boards'])
 
+const { format } = new Intl.NumberFormat('pt-br')
+
 const today = new Date().toLocaleDateString('pt-BR', {
   day: '2-digit',
   month: '2-digit',
@@ -45,19 +47,19 @@ function download() {
           <H3>{{ entry.board?.location?.name }}</H3>
           <div class="d-flex align-items-center justify-content-between">
             <span>Saldo Anterior: </span>
-            <span>{{ entry.previousTickets }}</span>
+            <span>{{ format( entry.previousTickets) }}</span>
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <span>Entradas: </span>
-            <span>{{ entry.ticketsWithdrawn }}</span>
+            <span>{{ format( entry.ticketsWithdrawn) }}</span>
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <span>Saídas: </span>
-            <span>{{ entry.ticketsRequested }}</span>
+            <span>{{ format( entry.ticketsRequested) }}</span>
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <span>Saldo Atual: </span>
-            <span>{{ entry.finalTickets }}</span>
+            <span>{{ format( entry.finalTickets) }}</span>
           </div>
         </Card>
       </div>

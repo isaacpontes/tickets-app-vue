@@ -1,20 +1,16 @@
 <script setup>
 import DataTable from './common/DataTable.vue';
-import DeleteButton from './common/DeleteButton.vue';
-
 defineProps(['boards'])
+const { format } = new Intl.NumberFormat('pt-br')
 </script>
 
 <template>
-  <DataTable :column-headers="['#', 'Local', 'Talões', 'Tickets', 'Ações']">
+  <DataTable :column-headers="['#', 'Local', 'Talões', 'Tickets']">
     <tr class="align-middle" v-for="board in boards">
       <th scope="row">{{ board.id }}</th>
       <td>{{ board.location?.name }}</td>
-      <td>{{ board.tickets / 100 }}</td>
-      <td>{{ board.tickets }}</td>
-      <td class="d-flex">
-        <DeleteButton />
-      </td>
+      <td>{{ format(board.tickets / 100) }}</td>
+      <td>{{ format(board.tickets) }}</td>
     </tr>
   </DataTable>
 </template>
