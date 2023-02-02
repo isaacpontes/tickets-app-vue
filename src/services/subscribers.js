@@ -59,6 +59,17 @@ export async function deleteSubscriber(subscriberId) {
   await api.delete(`/subscribers/${subscriberId}`)
 }
 
+export async function searchSubscriberByName(name, page = 1, limit = 20) {
+  try {
+    const response = await api.get(`/subscribers/search?name=${name}`)
+    return response.data
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao realizar a pesquisar.')
+    return { subscribers: [], total: 0 }
+  }
+}
+
 export function generateTable(subscribers) {
   const allSubscribers = subscribers.map((sub, index) => {
     const birthday = new Date(new Date(sub.birthday).getTime() + (3 * 60 * 60 * 1000))
