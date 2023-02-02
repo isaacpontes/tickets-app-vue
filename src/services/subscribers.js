@@ -24,6 +24,22 @@ export async function getSubscribersByLocation(locationId, page = 1, limit = 20)
   }
 }
 
+export async function createSubscriber({ name, birthday, document, isUpdated, locationId }) {
+  try {
+    const response = await api.post('/subscribers', {
+      name,
+      birthday,
+      document,
+      isUpdated,
+      locationId
+    })
+    return response.data
+  } catch (err) {
+    console.error(err.response?.data?.message || err.message)
+    alert('Ocorreu um erro ao salvar os dados do usuário.')
+  }
+}
+
 export async function updateSubscriber(subscriber) {
   try {
     await api.put(`/subscribers/${subscriber.id}`, {

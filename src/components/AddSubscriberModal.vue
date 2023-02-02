@@ -1,6 +1,8 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { api } from '../services/api';
+import { reactive } from 'vue'
+import { createSubscriber } from '../services/subscribers';
+import { useLocationStore } from '../stores/location';
+import { useSubscriberStore } from '../stores/subscriber';
 import Alert from './common/Alert.vue'
 import Modal from './common/Modal.vue';
 import ModalHeader from './common/ModalHeader.vue';
@@ -11,25 +13,22 @@ import Input from './common/Input.vue';
 
 const props = defineProps(['addSubscriber'])
 
+const locationStore = useLocationStore()
+const subscriberStore = useSubscriberStore()
+
 const initialSubscriber = { name: '', birthday: '', document: '', locationId: 0, isUpdated: true }
 const initialAlert = { show: false, message: '', color: 'primary' }
 const subscriber = reactive({ ...initialSubscriber })
 const alert = reactive({ ...initialAlert })
-const locations = ref([])
 
 async function handleSubmit(ev) {
   ev.preventDefault()
   try {
-    const response = await api.post('/subscribers', {
-      name: subscriber.name,
-      birthday: subscriber.birthday,
-      document: subscriber.document,
-      isUpdated: subscriber.isUpdated,
-      locationId: subscriber.locationId
-    })
-    props.addSubscriber(response.data)
+    const newSubscriber = await createSubscriber(subscriber)
+    subscriberStore.addSubscriber(newSubscriber)
     Object.assign(subscriber, initialSubscriber)
     toggleAlert('Contribuinte cadastrado com sucesso.', 'success')
+    document.querySelector('input#name').focus()
   } catch (err) {
     console.log(err)
     toggleAlert(err.response.data.message, 'danger')
@@ -44,15 +43,6 @@ function toggleAlert(message, color = 'primary') {
     Object.assign(alert, initialAlert)
   }, 1000 * 3)
 }
-
-async function fetchLocations() {
-  const response = await api.get('/locations')
-  locations.value = response.data
-}
-
-onMounted(() => {
-  fetchLocations()
-})
 </script>
 
 <template>
@@ -90,7 +80,7 @@ onMounted(() => {
           <Label for="locationsDataList">Local</Label>
           <select v-model="subscriber.locationId" class="form-select" aria-label="Lista de locais">
             <option selected value="0" disabled>Selecione um local...</option>
-            <option v-for="location in locations" :value="location.id" :key="location.id">
+            <option v-for="location in locationStore.locations" :value="location.id" :key="location.id">
               {{ location.name }}
             </option>
           </select>
