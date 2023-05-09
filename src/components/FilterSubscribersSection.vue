@@ -50,7 +50,7 @@ async function handleSearch(ev) {
     </div>
     <form class="d-flex gap-2" @submit="handleSearch">
       <Input v-model="name" placeholder="Digite um nome para pesquisar..." />
-      <Button>Pesquisar</Button>
+      <Button>Filtrar</Button>
     </form>
   </section>
 </template>

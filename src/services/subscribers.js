@@ -41,18 +41,13 @@ export async function createSubscriber({ name, birthday, document, isUpdated, lo
 }
 
 export async function updateSubscriber(subscriber) {
-  try {
-    await api.put(`/subscribers/${subscriber.id}`, {
-      name: subscriber.name,
-      birthday: subscriber.birthday,
-      document: subscriber.document,
-      isUpdated: subscriber.isUpdated,
-      locationId: subscriber.locationId
-    })
-  } catch (err) {
-    console.error(err.response?.data?.message || err.message)
-    alert('Ocorreu um erro ao atualizar os dados do usuário.')
-  }
+  await api.put(`/subscribers/${subscriber.id}`, {
+    name: subscriber.name,
+    birthday: subscriber.birthday,
+    document: subscriber.document,
+    isUpdated: subscriber.isUpdated,
+    locationId: subscriber.locationId
+  })
 }
 
 export async function deleteSubscriber(subscriberId) {

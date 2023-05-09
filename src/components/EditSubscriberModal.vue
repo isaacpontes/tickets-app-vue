@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { ref, watch } from 'vue'
 import { updateSubscriber } from '../services/subscribers';
 import { useLocationStore } from '../stores/location';
 import { useSubscriberStore } from '../stores/subscriber';
@@ -10,24 +10,31 @@ import Input from './common/Input.vue';
 import ModalHeader from './common/ModalHeader.vue';
 import ModalFooter from './common/ModalFooter.vue';
 
+const props = defineProps(['subscriber'])
+
 const subscriberStore = useSubscriberStore()
 const locationStore = useLocationStore()
 
-const props = defineProps(['subscriberToUpdate'])
+const updatedSubscriber = ref({})
 
-const subscriber = reactive({
-  ...props.subscriberToUpdate,
-  birthday: props.subscriberToUpdate.birthday.replace(/T.+Z$/, '')
-})
+const alert = ref({ show: false, message: '', color: '' })
 
-const initialAlert = { show: false, message: '', color: '' }
-const alert = reactive({ ...initialAlert })
+watch(
+  () => props.subscriber,
+  () => {
+    console.log(props.subscriber)
+    updatedSubscriber.value = {
+      ...props.subscriber,
+      birthday: props.subscriber?.birthday.replace(/T.+Z$/, '')
+    }
+  }
+)
 
 async function handleSubmit(ev) {
   ev.preventDefault()
   try {
-    await updateSubscriber(subscriber)
-    subscriberStore.updateSubscriber(subscriber)
+    await updateSubscriber(updatedSubscriber.value)
+    subscriberStore.updateSubscriber(updatedSubscriber.value)
     toggleAlert('Contribuinte atualizado com sucesso.', 'success')
   } catch (err) {
     const message = err.response?.data?.message || err.message
@@ -36,17 +43,15 @@ async function handleSubmit(ev) {
 }
 
 function toggleAlert(message, color = 'primary') {
-  alert.color = color
-  alert.message = message
-  alert.show = !alert.show
+  alert.value = { show: !alert.show, message, color }
   setTimeout(() => {
-    Object.assign(alert, initialAlert)
-  }, 1000 * 3)
+    alert.value = { show: false, message: '', color: '' }
+  }, 1000 * 5)
 }
 </script>
 
 <template>
-  <Modal :id="`updateSubscriber${subscriberToUpdate.id}Modal`">
+  <Modal id="editSubscriberModal">
     <ModalHeader title="Atualizar contribuinte" />
 
     <form v-on:submit="handleSubmit">
@@ -58,7 +63,7 @@ function toggleAlert(message, color = 'primary') {
           <Label for="name">Nome Completo</Label>
           <Input
             id="name"
-            v-model="subscriber.name"
+            v-model="updatedSubscriber.name"
             placeholder="Ex.: João Francisco da Silva"
             required
           />
@@ -68,7 +73,7 @@ function toggleAlert(message, color = 'primary') {
           <Input
             id="birthday"
             type="date"
-            v-model="subscriber.birthday"
+            v-model="updatedSubscriber.birthday"
             required
           />
         </div>
@@ -76,14 +81,14 @@ function toggleAlert(message, color = 'primary') {
           <Label for="document">CPF</Label>
           <Input
             id="document"
-            v-model="subscriber.document"
+            v-model="updatedSubscriber.document"
             placeholder="Digite somente números"
             required
           />
         </div>
         <div class="mb-3 form-check form-switch">
           <input
-            v-model="subscriber.isUpdated"
+            v-model="updatedSubscriber.isUpdated"
             type="checkbox"
             class="form-check-input"
             role="switch"
@@ -97,13 +102,13 @@ function toggleAlert(message, color = 'primary') {
             id="locations"
             class="form-select"
             aria-label="Lista de locais"
-            v-model="subscriber.locationId"
+            v-model="updatedSubscriber.locationId"
           >
             <option
               v-for="location in locationStore.locations"
               :value="location.id"
               :key="location.id"
-              :selected="subscriberToUpdate.location?.id === location.id"
+              :selected="updatedSubscriber.location?.id === location.id"
             >
               {{ location.name }}
             </option>
