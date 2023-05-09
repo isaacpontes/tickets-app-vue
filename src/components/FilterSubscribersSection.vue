@@ -2,7 +2,7 @@
 import Button from './common/Button.vue';
 import H2 from '../components/common/H2.vue';
 import Input from '../components/common/Input.vue';
-import { getSubscribersByLocation, searchSubscriberByName } from '../services/subscribers';
+import { searchSubscribers } from '../services/subscribers';
 import { useSubscriberStore } from '../stores/subscriber';
 import { useLocationStore } from '../stores/location';
 import { ref } from 'vue';
@@ -12,28 +12,17 @@ const locationStore = useLocationStore()
 
 const emit = defineEmits(['resetLocation'])
 
-const searchName = ref('')
+const name = ref('')
+const locationId = ref('')
 
-async function handleFilterByLocation(ev) {
-  const { locationId } = ev.currentTarget.dataset
-  const { id, name } = locationStore.getLocationById(locationId) ?? { id: 0, name: 'Todos' }
-  const { subscribers, total } = await getSubscribersByLocation(id)
-  subscriberStore.$patch({ subscribers, total, currentLocation: { id, name } })
-}
-
-async function handleFilterByName(ev) {
-  ev.preventDefault();
-
-  if (searchName.value.length >= 3) {
-    const { subscribers, total } = await searchSubscriberByName(searchName.value)
-    console.log(subscribers, total)
-    subscriberStore.$patch({ subscribers, total })
-  }
-}
-
-function handleResetLocation() {
-  subscriberStore.resetLocation()
-  emit("resetLocation")
+async function handleSearch(ev) {
+  ev.preventDefault()
+  const { subscribers, total } = await searchSubscribers({
+    name: name.value,
+    locationId: locationId.value
+  })
+  console.log(subscribers, total)
+  subscriberStore.$patch({ subscribers, total })
 }
 </script>
 
@@ -42,27 +31,25 @@ function handleResetLocation() {
     <H2>Filtrar</H2>
     <div class="mb-2">
       <Button
-        :color="subscriberStore.currentLocation.id === 0 ? 'secondary' : 'light'"
+        :color="locationId === '' ? 'secondary' : 'light'"
         size="sm"
         class="me-1 mb-1 px-1 py-0"
-        :data-location-id="0"
-        @click="handleResetLocation"
+        @click="() => locationId = ''"
       >
         Todos
       </Button>
       <Button
         v-for="location in locationStore.locations"
-        :color="subscriberStore.currentLocation.id === location.id ? 'secondary' : 'light'"
+        :color="locationId === location.id ? 'secondary' : 'light'"
         size="sm"
         class="me-1 mb-1 px-1 py-0"
-        :data-location-id="location.id"
-        @click="handleFilterByLocation"
+        @click="() => locationId = location.id"
       >
         {{ location.name }}
       </Button>
     </div>
-    <form class="d-flex gap-2" @submit="handleFilterByName">
-      <Input v-model="searchName" placeholder="Digite um nome para pesquisar..." />
+    <form class="d-flex gap-2" @submit="handleSearch">
+      <Input v-model="name" placeholder="Digite um nome para pesquisar..." />
       <Button>Pesquisar</Button>
     </form>
   </section>
