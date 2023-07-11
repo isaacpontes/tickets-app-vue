@@ -5,7 +5,10 @@ export const useSubscriberStore = defineStore('subscribers', {
     /** @type {{ id: number, name: string, birthday: string, locationId: number, isUpdated: boolean, location: { id: number, name: string } }[]} */
     subscribers: [],
     total: 0,
+    currentSearchName: '',
     currentLocation: { id: 0, name: 'Todos' },
+    currentPage: 1,
+    currentLimit: 20
   }),
   actions: {
     addSubscriber(subscriber) {
@@ -19,6 +22,12 @@ export const useSubscriberStore = defineStore('subscribers', {
     },
     resetLocation() {
       this.currentLocation = { id: 0, name: 'Todos' }
+    },
+    incrementPage() {
+      this.currentPage++
+    },
+    decrementPage() {
+      this.currentPage--
     }
   }
 })

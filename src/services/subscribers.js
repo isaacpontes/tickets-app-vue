@@ -56,7 +56,7 @@ export async function deleteSubscriber(subscriberId) {
 
 export async function searchSubscribers({ name, locationId }, page = 1, limit = 20) {
   try {
-    const response = await api.get(`/subscribers/search?name=${name}&locationId=${locationId}`)
+    const response = await api.get(`/subscribers/search?name=${name}&locationId=${locationId}&page=${page}&limit=${limit}`)
     return response.data
   } catch (err) {
     console.error(err.response?.data?.message || err.message)

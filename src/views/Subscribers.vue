@@ -4,7 +4,7 @@ import AddSubscriberModal from '../components/AddSubscriberModal.vue'
 import SubscribersTable from '../components/SubscribersTable.vue'
 import Paginator from '../components/Paginator.vue';
 import { getAll } from '../services/locations';
-import { getAllSubscribers, downloadPdf } from '../services/subscribers';
+import { downloadPdf, searchSubscribers } from '../services/subscribers';
 import { useSubscriberStore } from '../stores/subscriber';
 import { useLocationStore } from '../stores/location';
 import Button from '../components/common/Button.vue';
@@ -13,8 +13,6 @@ import PageQuantitySelector from '../components/PageQuantitySelector.vue';
 
 const subscriberStore = useSubscriberStore()
 const locationStore = useLocationStore()
-const currentPage = ref(1)
-const currentLimit = ref(20)
 
 async function fetchLocations() {
   const locations = await getAll()
@@ -22,8 +20,29 @@ async function fetchLocations() {
 }
 
 async function fetchSubscribers() {
-  const { subscribers, total } = await getAllSubscribers(currentPage.value, currentLimit.value)
+  const { subscribers, total } = await searchSubscribers({
+    name: subscriberStore.currentSearchName,
+    locationId: subscriberStore.currentLocation.id || ''
+  },
+    subscriberStore.currentPage,
+    subscriberStore.currentLimit
+  )
   subscriberStore.$patch({ subscribers, total })
+}
+
+function incrementPage() {
+  subscriberStore.incrementPage()
+  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+}
+
+function decrementPage() {
+  subscriberStore.decrementPage()
+  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+}
+
+function changePageTo(newPage) {
+  subscriberStore.$patch({ currentPage: newPage })
+  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
 }
 
 watchEffect(fetchSubscribers)
@@ -48,25 +67,28 @@ onMounted(() => {
       Exportar como PDF
     </Button>
   </div>
+
   <hr>
+
   <AddSubscriberModal />
+
   <FilterSubscribersSection @reset-location="fetchSubscribers" />
 
   <PageQuantitySelector
     :shown="subscriberStore.subscribers.length"
     :total="subscriberStore.total"
     label="usuários"
-    @limit-change="(newLimit) => currentLimit = newLimit"
+    @limit-change="(newLimit) => subscriberStore.$patch({ currentLimit: newLimit })"
   />
 
   <SubscribersTable />
 
   <Paginator
-    :current-page="currentPage"
-    :current-limit="currentLimit"
+    :current-page="subscriberStore.currentPage"
+    :current-limit="subscriberStore.currentLimit"
     :total="subscriberStore.total"
-    @page-increment="() => currentPage++"
-    @page-decrement="() => currentPage--"
-    @page-change="(newPage) => currentPage = newPage"
+    @page-increment="incrementPage"
+    @page-decrement="decrementPage"
+    @page-change="(newPage) => changePageTo(newPage)"
   />
 </template>
